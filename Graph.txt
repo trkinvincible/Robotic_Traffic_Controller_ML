@@ -1,0 +1,112 @@
+# straight
+checkpoint   50     0   150     0
+checkpoint   50  -100   150  -100
+checkpoint   50  -200   150  -200
+
+checkpoint   50  -300   150  -300
+checkpoint   50  -400   150  -400
+checkpoint   50  -500   150  -500
+
+# turn left
+checkpoint   50  -500   150  -600
+checkpoint   50  -500   50   -600
+checkpoint  -50  -500  -50   -600
+
+#straight again
+checkpoint -150  -500  -150  -600
+checkpoint -250  -500  -250  -600
+checkpoint -350  -500  -350  -600
+
+#turn down
+checkpoint -350  -500  -450  -600
+checkpoint -350  -500  -450  -500
+checkpoint -350  -400  -450  -400
+checkpoint -350  -300  -450  -300
+
+# tight turn right
+checkpoint -350  -200  -450  -200  
+checkpoint -350  -200  -450  -100  
+checkpoint -350  -200  -350  -100 
+
+checkpoint -250  -200  -250  -100  
+checkpoint -150  -200  -150  -100
+checkpoint -100  -200  -100  -100
+checkpoint -50   -200  -50   -100
+#checkpoint  0    -200   0    -100
+#checkpoint  100  -200   100  -100
+
+#turn Up
+#checkpoint  -50  -200   -50  -100
+#checkpoint  -50  -200   -50   0
+
+
+
+
+
+
+
+
+
+# turn right
+#checkpoint   50  -400   150  -350
+#checkpoint  150  -500   250  -450
+#checkpoint  150  -600   250  -650
+
+# turn middle
+#checkpoint   50  -700   150  -750
+
+# turn left
+#checkpoint  -50  -800   50  -850
+#checkpoint  -50 -1000   50  -950
+#checkpoint   50 -1100  150 -1050
+
+
+# straight
+#checkpoint   50 -1300  150 -1300
+
+
+# tight turn right-left
+#checkpoint  150 -1400  250 -1400
+#checkpoint   50 -1500  150 -1500
+#checkpoint  -50 -1600   50 -1600
+#checkpoint   50 -1700  150 -1700
+
+# straight
+#checkpoint   50 -1900  150 -1900
+
+# spreaded straight
+#checkpoint    0 -2000  200 -2000
+#checkpoint    0 -2200  200 -2200
+#checkpoint   50 -2300  150 -2300
+
+# straight
+#checkpoint   50 -2400  150 -2400
+
+# shortened straight
+#checkpoint   75 -2500  125 -2500
+#checkpoint   75 -2700  125 -2700
+#checkpoint   50 -2800  150 -2800
+
+# straight
+#checkpoint   50 -2900  150 -2900
+
+
+
+
+# turn right
+#checkpoint   50 -3100   150 -3000
+#checkpoint  150 -3100   250 -3000
+#checkpoint  150 -3200   250 -3300
+
+# turn middle
+#checkpoint  100 -3200   100 -3300
+
+# turn left
+#checkpoint  -50 -3200    50 -3300
+#checkpoint  -50 -3500    50 -3400
+#checkpoint   50 -3500   150 -3400
+
+# # straight
+#checkpoint   50 -3600   150 -3600
+
+
