@@ -6,7 +6,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    TrafficController rk_controller("c:\\Personal\\ML\\Learning_car_source_code\\geneticAlgorithm_experiment-master\\carDemo\\src_cpp\\res\\Map_test.txt");
+    TrafficController rk_controller("../Graph.txt");
 
     RendererSFML	my_RendererSFML(rk_controller);
 

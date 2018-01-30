@@ -98,7 +98,7 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     // m_fitness += 0.01f;
 
     this->updateSensors();
-    this->collideCheckpoints( circuit.getCheckpoints() );
+//    this->collideCheckpoints( circuit.getCheckpoints() );
 
     // return;
 

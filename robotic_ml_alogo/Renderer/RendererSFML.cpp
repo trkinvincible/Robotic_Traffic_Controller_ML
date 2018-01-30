@@ -11,20 +11,18 @@
 namespace
 {
 
-// void drawLine(sf::RenderWindow& rwindow, const t_line& line, const sf::Color& color1, const sf::Color& color2)
-// {
-// 	const t_vec2f& p1 = line.p1;
-// 	const t_vec2f& p2 = line.p2;
+void drawPoint(sf::RenderWindow& rwindow, const t_vec2f& point, const sf::Color& color)
+{
+    float size = 10.0f;
+    sf::Vertex vertices[] = {
+        sf::Vertex(sf::Vector2f(point.x - size, point.y - size), color),
+        sf::Vertex(sf::Vector2f(point.x + size, point.y + size), color),
+        sf::Vertex(sf::Vector2f(point.x + size, point.y - size), color),
+        sf::Vertex(sf::Vector2f(point.x - size, point.y + size), color)
+    };
 
-// 	// define a 100x100 square, red, with a 10x10 texture mapped on it
-// 	sf::Vertex vertices[] = {
-// 		sf::Vertex( sf::Vector2f(p1.x, p1.y), color1 ),
-// 		sf::Vertex( sf::Vector2f(p2.x, p2.y), color2 )
-// 	};
-
-// 	// draw it
-// 	rwindow.draw(vertices, 2, sf::Lines);
-// }
+    rwindow.draw(vertices, 4, sf::Lines);
+}
 
 void drawLine(sf::RenderWindow& rwindow, const t_line& line, const sf::Color& color, float thickness = 1.0f)
 {
@@ -43,105 +41,24 @@ void drawLine(sf::RenderWindow& rwindow, const t_line& line, const sf::Color& co
     rwindow.draw(recline);
 }
 
-void drawLines(sf::RenderWindow& rwindow, const t_lines& lines, const sf::Color& color1, const sf::Color& color2)
+void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color& color,bool render_sensors)
 {
-    static std::vector<sf::Vertex>	s_vertices;
+    const t_vec2f& position = vehical.getPosition();
+    float radius = 20.0f;
 
-    s_vertices.clear();
-    for (unsigned int i = 0; i < lines.size(); ++i)
-    {
-        s_vertices.push_back( sf::Vertex( sf::Vector2f(lines[i].p1.x, lines[i].p1.y), color1 ) );
-        s_vertices.push_back( sf::Vertex( sf::Vector2f(lines[i].p2.x, lines[i].p2.y), color2 ) );
-    }
+    sf::Color col = (vehical.isAlive() ? sf::Color::Green : sf::Color::Yellow);
 
-    rwindow.draw(&(s_vertices[0]), s_vertices.size(), sf::Lines);
-}
+    sf::CircleShape circle;
+    circle.setRadius(radius);
+    circle.setOutlineColor(sf::Color::Red);
+    circle.setOutlineThickness(5);
+    circle.setPosition(position.x, position.y);
+    rwindow.draw(circle);
 
-void drawPoint(sf::RenderWindow& rwindow, const t_vec2f& point, const sf::Color& color)
-{
-    float size = 10.0f;
-    sf::Vertex vertices[] = {
-        sf::Vertex(sf::Vector2f(point.x - size, point.y - size), color),
-        sf::Vertex(sf::Vector2f(point.x + size, point.y + size), color),
-        sf::Vertex(sf::Vector2f(point.x + size, point.y - size), color),
-        sf::Vertex(sf::Vector2f(point.x - size, point.y + size), color)
-    };
-
-    rwindow.draw(vertices, 4, sf::Lines);
-}
-
-void drawCar(sf::RenderWindow& rwindow, const Robots& car, const sf::Color& color, bool render_sensors)
-{
-    const t_vec2f& position = car.getPosition();
-    float angle = car.getAngle();
-
-    {
-        float size_h = 25.0f;
-        float size_v = 12.5f;
-
-        float ratio;// = car.getLife();
-
-        t_vec2f	positions[4] = {
-            t_vec2f(position.x - size_h, position.y - size_v),
-            t_vec2f(position.x - size_h + size_h * 2.0f * ratio, position.y - size_v),
-            t_vec2f(position.x - size_h + size_h * 2.0f * ratio, position.y + size_v),
-            t_vec2f(position.x - size_h, position.y + size_v)
-        };
-
-        for (int i = 0; i < 4; ++i)
-            positions[i] = rotateVec2(positions[i], position, angle);
-
-        // sf::Color col = (car.isAlive() ? color : sf::Color::Red);
-        // sf::Color col = sf::Color::Green;
-        sf::Color col = (car.isAlive() ? sf::Color::Green : sf::Color::Yellow);
-        col.g *= ratio;
-
-        sf::Vertex p1(sf::Vector2f(positions[0].x, positions[0].y), col);
-        sf::Vertex p2(sf::Vector2f(positions[1].x, positions[1].y), col);
-        sf::Vertex p3(sf::Vector2f(positions[2].x, positions[2].y), col);
-        sf::Vertex p4(sf::Vector2f(positions[3].x, positions[3].y), col);
-
-        sf::Vertex vertices[] = { p1,p2,p3, p1,p4,p3 };
-
-        rwindow.draw(vertices, 6, sf::Triangles);
-    }
-
-    {
-        float size_h = 25.0f;
-        float size_v = 12.5f;
-
-        t_vec2f	positions[4] = {
-            t_vec2f(position.x - size_h, position.y - size_v),
-            t_vec2f(position.x + size_h, position.y - size_v),
-            t_vec2f(position.x + size_h, position.y + size_v),
-            t_vec2f(position.x - size_h, position.y + size_v)
-        };
-
-        for (int i = 0; i < 4; ++i)
-            positions[i] = rotateVec2(positions[i], position, angle);
-
-        sf::Color col = (car.isAlive() ? color : sf::Color::Red);
-
-        sf::Vertex p1(sf::Vector2f(positions[0].x, positions[0].y), col);
-        sf::Vertex p2(sf::Vector2f(positions[1].x, positions[1].y), col);
-        sf::Vertex p3(sf::Vector2f(positions[2].x, positions[2].y), col);
-        sf::Vertex p4(sf::Vector2f(positions[3].x, positions[3].y), col);
-
-        sf::Vertex vertices[] = { p1,p2, p2,p3, p3,p4, p4,p1 };
-
-        glLineWidth(5.0f);
-
-        rwindow.draw(vertices, 8, sf::Lines);
-
-        glLineWidth(1.0f);
-    }
-
-    ///
-
-    if (!car.isAlive() || !render_sensors)
+    if (!vehical.isAlive() || !render_sensors)
         return;
 
-    const Robots::t_sensors&	sensors = car.getSensors();
+    const Robots::t_sensors&	sensors = vehical.getSensors();
 
     for (Robots::t_sensor sensor : sensors)
     {
@@ -163,6 +80,40 @@ void drawCar(sf::RenderWindow& rwindow, const Robots& car, const sf::Color& colo
     }
 }
 
+void drawSquare(sf::RenderWindow& rwindow,int side,int x,int y)
+{
+    sf::RectangleShape rectangle;
+    rectangle.setSize(sf::Vector2f(side,side));
+    rectangle.setOutlineColor(sf::Color::Red);
+    rectangle.setOutlineThickness(5);
+    rectangle.setPosition(x, y);
+    rectangle.setFillColor(sf::Color());
+    rwindow.draw(rectangle);
+}
+
+void drawGrap(sf::RenderWindow& rwindow,const std::pair<int,int> &grid_degree,int side_lenght,const std::vector<int> &skip_index)
+{
+    int row    = grid_degree.first;
+    int column = grid_degree.second;
+    int y=200;
+    int xoffest=50;
+    int count = 1;
+
+    for(int j=1;j<=row;j++){
+
+        for(int i=1;i <= column;i++){
+
+            if(std::find(skip_index.begin(),skip_index.end(),count) != skip_index.end()){
+                count++;
+                continue;
+            }
+            drawSquare(rwindow,side_lenght,(i*side_lenght)+xoffest,y);
+            count++;
+        }
+      y+=side_lenght;
+    }
+}
+
 }; // namespace
 
 
@@ -173,174 +124,67 @@ RendererSFML::RendererSFML(TrafficController& rk_controller)
 
 void  RendererSFML::run(std::function<void()> callback)
 {
-    const t_lines&	checkpoints = mController.getCircuit().getCheckpoints();
+    const std::vector<t_vec2f>&	checkpoints = mController.getCircuit().getCheckpoints();
 
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
+    sf::RenderWindow window(sf::VideoMode(1024, 768), "SFML window");
     window.setFramerateLimit(60);
+    int	index_target_robot = -1;
 
-    int	index_target_car = -1;
-    int	frames_until_new_target = 30;
-    sf::Vector2f	camera_center;
-
-    // Start the game loop
     while (window.isOpen())
     {
+        // Event processing
         sf::Event event;
-#if 0
         while (window.pollEvent(event))
         {
-            // Close window: exit
+            // Request for closing the window
             if (event.type == sf::Event::Closed)
                 window.close();
-
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
-                window.close();
-
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::P))
-            {
-                //D_MYLOG("getCurrentGeneration=" << m_Simulation.getCurrentGeneration());
-                //D_MYLOG("getBestFitness=" << m_Simulation.getBestFitness());
-
-                for (unsigned int i = 0; i < m.getCars().size(); ++i)
-                {
-                    const Robots& c = m_Simulation.getCars()[i];
-
-                    const t_vec2f& pos = c.getPosition();
-                    float angle = c.getAngle();
-
-                    //D_MYLOG("[" << i << "] pos=" << pos.x << "/" << pos.y << ", angle=" << angle << ", alive=" << c.isAlive() << ", id=" << m_Simulation.getGenomes()[i].m_id);
-                }
-            }
         }
-#endif
 
-        int iteration_nbr = 3;
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            iteration_nbr = 290;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            iteration_nbr = 1;
-
-        for (int i = 0; i < iteration_nbr; ++i)
-            callback();
-
-#if 0
-        // camera
+        // Activate the window for OpenGL rendering
+        window.setActive();
+        //Update Cordinates for drawning
         {
-            sf::View	view;
-            view.reset(sf::FloatRect(0, 0, 800, 600));
-
-            t_vec2f	target;
-
-            auto&& cars = m_Simulation.getCars();
-
-            --frames_until_new_target;
-            if (frames_until_new_target <= 0 ||
-                    index_target_car < 0 ||
-                    !cars[index_target_car].isAlive())
-            {
-                frames_until_new_target = 60;
-
-                float	curr_fitness = -1;
-
-                for (unsigned int ii = 0; ii < cars.size(); ++ii)
-                {
-                    auto& car = cars[ii];
-
-                    if (!car.isAlive())
-                        continue;
-
-                    if (curr_fitness > car.getFitness())
-                        continue;
-
-                    curr_fitness = car.getFitness();
-
-                    index_target_car = ii;
-                }
-            }
-
-            if (index_target_car >= 0)
-            {
-                target = cars[index_target_car].getPosition();
-            }
-
-
-            // unsigned int index = 0;
-            // for (; index < m_Simulation.getCars().size(); ++index)
-            // 	if (m_Simulation.getCars()[index].isAlive())
-            // 		break;
-
-            // if (index < m_Simulation.getCars().size())
-            // {
-            // 	index_target_car = index;
-            // 	target = m_Simulation.getCars()[index_target_car].getPosition();
-            // }
-            // else
-            // 	index_target_car = -1;
-
-
-
-
-            sf::Vector2f	diff(target.x-camera_center.x-200, target.y-camera_center.y);
-
-            camera_center.x += diff.x * 0.1;
-            camera_center.y += diff.y * 0.1;
-
-            // view.setCenter(400,300);
-            if (iteration_nbr <= 3)
-                view.setCenter(camera_center);
-            else
-            {
-                view.zoom(7.0f);
-                view.setCenter(sf::Vector2f(0, -1700));
-                // view.reset(sf::FloatRect(-800, -600, 1600, 1200));
-            }
-
-            window.setView(view);
-
-        } // camera
-#endif
+            for (int i = 0; i < 50; ++i)
+                callback();
+        }
         // Clear screen
         window.clear();
 
         // render circuit
-        drawLines(window, checkpoints, sf::Color(255,255,255), sf::Color(128,128,128));
+        std::pair<int,int> grid_degree = std::make_pair<int,int>(2,5);
+        std::vector<int> skip_index = {2,3,4,8};
+        drawGrap(window,grid_degree,150,skip_index);
 
-#if 0
-
-        { // render cars
-
+        //Get the fittest Robot
+        {
+            auto vec_robots = mController.getTragetVechicals();
+            float	curr_fitness = -1;
+            for (unsigned int ii = 0; ii < vec_robots.size(); ++ii)
+            {
+                auto& vehical = vec_robots[ii];
+                if (!vehical.isAlive())
+                    continue;
+                if (curr_fitness > vehical.getFitness())
+                    continue;
+                curr_fitness = vehical.getFitness();
+                index_target_robot = ii;
+            }
+        }
+        //render robots
+        {
             // render cars (except targetted car)
-            auto arr_cars = m_Simulation.getCars();
-            for (int index = 0; index < static_cast<int>(arr_cars.size()); ++index)
-                if (index != index_target_car)
-                    drawCar(window, arr_cars[index], sf::Color::Green, false);
+            auto vec_robots = mController.getTragetVechicals();
+            for (int index = 0; index < static_cast<int>(vec_robots.size()); ++index)
+                if (index != index_target_robot)
+                    drawRobot(window, vec_robots[index], sf::Color::Green, false);
 
             // render targetted car
-            if (index_target_car != -1)
-                drawCar(window, arr_cars[index_target_car], sf::Color::Blue, true);
-
-        } // render cars
-
-        { // render trails
-
-            const std::vector< std::vector<t_line> >&	trails = m_Simulation.getTrails();
-            if (!trails.empty())
-            {
-                for (unsigned int i = 0; i < trails.size() - 1; ++i)
-                {
-                    sf::Color	color = sf::Color::Black;
-                    color.g = 128 + ((float)i / trails.size()) * 128;
-                    drawLines(window, trails[i], color, color);
-                }
-
-                drawLines(window, trails.back(), sf::Color::White, sf::Color::White);
-            }
-
-        } // render trails
-#endif
-        // Update the window
+            if (index_target_robot != -1)
+                drawRobot(window, vec_robots[index_target_robot], sf::Color::Blue, true);
+        }
+        // End the current frame and display its contents on screen
         window.display();
     }
 }

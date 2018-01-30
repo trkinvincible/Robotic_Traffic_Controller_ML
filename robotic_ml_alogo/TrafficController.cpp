@@ -33,13 +33,13 @@ void TrafficController::update(float step)
 {
     bool	someone_is_alive = false;
 
-    #pragma omp parallel num_threads(3)
+#pragma omp parallel for //num_threads(3)
     {
         // This code will be executed by three threads.
 
         // Chunks of this loop will be divided amongst
         // the (three) threads of the current team.
-        #pragma omp for
+        //        #pragma omp for
         for (unsigned int i = 0; i < mTragetVechicals.size(); ++i)
         {
             if (!mTragetVechicals[i].isAlive())
@@ -64,9 +64,6 @@ void TrafficController::update(float step)
     {
         Robots& car = mTragetVechicals[ mGenAlgo.getAlpha().m_index ];
     }
-
-    //
-    //
 
     for (Robots& car : mTragetVechicals)
         car.reset(mCircuit);

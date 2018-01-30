@@ -8,8 +8,9 @@
 
 class Circuit
 {
+    typedef std::vector<t_vec2f> points;
 private:
-    t_lines mNodes;
+    points mNodes;
 
     t_vec2f mStartPosition;
     float mStartAngle;
@@ -25,7 +26,7 @@ public:
 public:
     // setter/getter
     inline bool	isValid() const { return misValid; }
-    inline const t_lines&	getCheckpoints() const { return mNodes; }
+    inline const points&	getCheckpoints() const { return mNodes; }
 
     inline const t_vec2f&	getStartingPositon() const { return mStartPosition; }
     inline float			getStartingAngle() const { return mStartAngle; }
