@@ -44,7 +44,7 @@ void drawLine(sf::RenderWindow& rwindow, const t_line& line, const sf::Color& co
 void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color& color,bool render_sensors)
 {
     const t_vec2f& position = vehical.getPosition();
-    float radius = 20.0f;
+    float radius = vehical.getRadius();
 
     sf::Color col = (vehical.isAlive() ? sf::Color::Green : sf::Color::Yellow);
 
@@ -52,7 +52,8 @@ void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color
     circle.setRadius(radius);
     circle.setOutlineColor(sf::Color::Red);
     circle.setOutlineThickness(5);
-    circle.setPosition(position.x, position.y);
+    circle.setFillColor(col);
+    circle.setPosition(position.x-(20.0f), position.y-(20.0f));
     rwindow.draw(circle);
 
     if (!vehical.isAlive() || !render_sensors)
@@ -114,6 +115,7 @@ void drawGrap(sf::RenderWindow& rwindow,const std::pair<int,int> &grid_degree,in
     }
 }
 
+
 }; // namespace
 
 
@@ -127,7 +129,11 @@ void  RendererSFML::run(std::function<void()> callback)
     const std::vector<t_vec2f>&	checkpoints = mController.getCircuit().getCheckpoints();
 
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(1024, 768), "SFML window");
+    sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
+
+    sf::RenderWindow window(sf::VideoMode(desktopMode.width,
+                            desktopMode.height,
+                            desktopMode.bitsPerPixel), "SFML window");
     window.setFramerateLimit(60);
     int	index_target_robot = -1;
 
@@ -183,6 +189,33 @@ void  RendererSFML::run(std::function<void()> callback)
             // render targetted car
             if (index_target_robot != -1)
                 drawRobot(window, vec_robots[index_target_robot], sf::Color::Blue, true);
+
+            sf::Font font;
+            font.loadFromFile("./arial.ttf");
+
+            sf::Text text;
+
+            text.setFont(font);
+
+            std::string s;
+            std::stringstream ss(s);
+
+            ss << std::string("NN output[0]: ") << vec_robots[index_target_robot].getNNOutPut().at(0) << std::endl;
+            ss << std::string("NN output[1]: ") << vec_robots[index_target_robot].getNNOutPut().at(1) << std::endl;
+
+            ss << std::string("Sensor-back: ") << vec_robots[index_target_robot].getSensors().at(0).m_value << std::endl;
+            ss << std::string("Sensor-down: ") << vec_robots[index_target_robot].getSensors().at(1).m_value << std::endl;
+            ss << std::string("Sensor-right: ") << vec_robots[index_target_robot].getSensors().at(2).m_value << std::endl;
+            ss << std::string("Sensor-top: ") << vec_robots[index_target_robot].getSensors().at(3).m_value << std::endl;
+
+
+            text.setString(ss.str());
+
+            text.setColor(sf::Color::White);
+
+            text.setPosition(50,550);
+
+            window.draw(text);
         }
         // End the current frame and display its contents on screen
         window.display();

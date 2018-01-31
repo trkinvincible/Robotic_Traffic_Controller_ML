@@ -10,3 +10,4 @@ t_vec2f::t_vec2f()
 t_vec2f::t_vec2f(float in_x, float in_y)
 	:	x(in_x), y(in_y)
 {}
+

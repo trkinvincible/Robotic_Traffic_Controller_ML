@@ -13,10 +13,16 @@ public: // external structures
         t_line	m_line;
         float	m_value;
     };
-    typedef std::array<t_sensor, 5>	t_sensors;
+    typedef std::array<t_sensor, 4>	t_sensors;
+
+    std::vector<float>	mDisplay_Output;
 
 private: // attributs
+    //destination values
+    t_vec2f mDestination;
+
     t_vec2f	m_position;
+    t_vec2f	m_previous_position;
     float	m_angle;
     float	m_fitness;
     bool	m_alive;
@@ -34,15 +40,20 @@ public: // ctor/dtor
     Robots();
 
 public: // methods
+    std::vector<float> getNNOutPut(){return mDisplay_Output;}
+    void    setDestination(t_vec2f dest){mDestination = dest;}
+    void    setSource(t_vec2f src){m_position = src;}
     void	update(float step, const Circuit& circuit, const NeuralNetwork& nn);
     void	reset(const Circuit& circuit);
 
 private: // methods
-    void	updateSensors();
-    void	collideCheckpoints(const t_lines& checkpoints);
+    void updateFitness();
+    void updateSensors();
+    void collideNodes(const Circuit& circuit);
 
 public: // setter/getter
 
+    inline const int	getRadius() const { return 20; }
     inline const t_vec2f&	getPosition() const { return m_position; }
     inline float			getAngle() const { return m_angle; }
 

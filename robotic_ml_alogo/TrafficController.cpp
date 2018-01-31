@@ -26,6 +26,9 @@ TrafficController::TrafficController(const std::string &filename)
     {
         Robots& V = mTragetVechicals[i];
         V.reset(mCircuit);
+        V.setDestination(t_vec2f(950,350));
+//        V.setSource(t_vec2f(200.0f-(V.getRadius()/2.0f),200.0f-(V.getRadius()/2.0f)));
+        V.setSource(t_vec2f(200.0f,200.0f));
     }
 }
 
@@ -33,7 +36,7 @@ void TrafficController::update(float step)
 {
     bool	someone_is_alive = false;
 
-#pragma omp parallel for //num_threads(3)
+    #pragma omp parallel for //num_threads(3)
     {
         // This code will be executed by three threads.
 

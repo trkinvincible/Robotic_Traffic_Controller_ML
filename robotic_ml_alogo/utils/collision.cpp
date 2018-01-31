@@ -25,6 +25,31 @@
 // UNUSED AS SLOWER
 //
 
+bool isDistantNode(t_vec2f A, t_vec2f B)
+{
+    return (A.x > B.x);
+}
+
+bool isSameNode(t_vec2f A, t_vec2f B)
+{
+    return (A.x == B.x && A.y == B.y);
+}
+
+bool isPointOntheLine(t_vec2f A, t_vec2f B, t_vec2f C) {
+
+    int AB = sqrt((B.x-A.x)*(B.x-A.x)+(B.y-A.y)*(B.y-A.y));
+    int AP = sqrt((C.x-A.x)*(C.x-A.x)+(C.y-A.y)*(C.y-A.y));
+    int PB = sqrt((B.x-C.x)*(B.x-C.x)+(B.y-C.y)*(B.y-C.y));
+
+    int temp = AP+PB;
+    int diff = std::abs(AB-temp);
+
+    if(diff >=0 && diff <=3)
+        return true;
+    else
+        return false;
+}
+
 bool CollisionLineSeg(const t_vec2f& A, const t_vec2f& B, const t_vec2f& O, const t_vec2f& P)
 {
 	t_vec2f AO,AP,AB;
