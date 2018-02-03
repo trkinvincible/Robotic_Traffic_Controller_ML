@@ -13,7 +13,7 @@ class RendererSFML
 {
 private: // attributs
     TrafficController &	mController;
-    sf::Text mEvidenceTextView;
+    sf::Font mFont;
 
 public: // ctor/dtor
     RendererSFML(TrafficController& rk_controller);

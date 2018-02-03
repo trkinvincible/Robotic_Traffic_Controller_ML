@@ -138,17 +138,17 @@ void drawGrap(sf::RenderWindow& rwindow,const std::pair<int,int> &grid_degree,in
 RendererSFML::RendererSFML(TrafficController& rk_controller)
     : mController(rk_controller)
 {
-    sf::Font font;
-    font.loadFromFile("./arial.ttf");
-    mEvidenceTextView.setFont(font);
-    mEvidenceTextView.setColor(sf::Color::White);
-    mEvidenceTextView.setPosition(1000,50);
+    mFont.loadFromFile("./arial.ttf");
 }
 
 void  RendererSFML::run(std::function<void()> callback)
 {
     const std::vector<t_vec2f>&	checkpoints = mController.getCircuit().getCheckpoints();
 
+    sf::Text Textview;
+    Textview.setFont(font);
+    Textview.setColor(sf::Color::White);
+    Textview.setPosition(1000,50);
     // Create the main window
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
 
@@ -243,9 +243,9 @@ void  RendererSFML::run(std::function<void()> callback)
 
             ss << std::string("Success Rate: ") << mController.getSuccessRate() << std::endl;
 
-            mEvidenceTextView.setString(ss.str());
+            Textview.setString(ss.str());
 
-            window.draw(mEvidenceTextView);
+            window.draw(Textview);
         }
         // End the current frame and display its contents on screen
         window.display();
