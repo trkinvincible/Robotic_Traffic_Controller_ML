@@ -25,14 +25,33 @@
 // UNUSED AS SLOWER
 //
 
-bool isDistantNode(t_vec2f A, t_vec2f B)
+float isDistantNode(t_vec2f A, t_vec2f B)
 {
-    return (A.x > B.x);
+    int diff = std::abs(A.x - B.x);
+    int columns_crossed=0;
+    if(diff > 0)
+         columns_crossed = diff / 150;
+
+    return columns_crossed;
 }
 
 bool isSameNode(t_vec2f A, t_vec2f B)
 {
-    return (A.x == B.x && A.y == B.y);
+    bool yes=false;
+
+    int x_diff = std::abs(A.x - B.x);
+    if(x_diff >=0 && x_diff <=30) {
+
+        yes=true;
+    }
+    if(yes){
+        int y_diff = std::abs(A.y-B.y);
+        if(y_diff >=0 && y_diff <=30) {
+
+            return true;
+        }
+    }
+    return false;
 }
 
 bool isPointOntheLine(t_vec2f A, t_vec2f B, t_vec2f C) {

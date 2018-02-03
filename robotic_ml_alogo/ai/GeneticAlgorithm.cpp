@@ -28,7 +28,7 @@ void	GeneticAlgorithm::init(NeuralNetworkTopology& NNTopology)
 void	GeneticAlgorithm::generateRandomPopulation()
 {
 	// reset the genomes
-	m_genomes.resize(50);
+    m_genomes.resize(50);
 
 	for (unsigned int i = 0; i < m_genomes.size(); ++i)
 	{
@@ -41,7 +41,7 @@ void	GeneticAlgorithm::generateRandomPopulation()
 		genome.m_weights.resize( m_pNNTopology->getTotalWeights() );
 
 		for (float& weight : genome.m_weights)
-            weight = std::rand();
+            weight = randomClamped();
 	}
 
 	m_NNetworks.reserve( m_genomes.size() );
@@ -65,63 +65,64 @@ void	GeneticAlgorithm::BreedPopulation()
 		return;
 
 	std::vector<t_genome>	bestGenomes;
-	getBestGenomes(20, bestGenomes);
+    getBestGenomes(20/*just a min expectation*/, bestGenomes);
 
 
 	std::vector<t_genome>	children;
 	children.reserve( m_genomes.size() );
 	
+    unsigned int current_index = 0;
 
-	if (m_best_fitness < bestGenomes[0].m_fitness)
-	{
-		m_best_fitness = bestGenomes[0].m_fitness;
+    if(bestGenomes.size() > 0){
 
-		//D_MYLOG("m_current_generation=" << m_current_generation
-		//	<< std::fixed << ", m_best_fitness=" << m_best_fitness);
+        if (m_best_fitness < bestGenomes[0].m_fitness)
+        {
+            m_best_fitness = bestGenomes[0].m_fitness;
 
-		m_is_a_great_generation = true;
-	}
-	else
-	{
-		m_is_a_great_generation = false;
-	}
+            //D_MYLOG("m_current_generation=" << m_current_generation
+            //	<< std::fixed << ", m_best_fitness=" << m_best_fitness);
 
-
-	unsigned int current_index = 0;
-
-	if (m_best_fitness > m_alpha_genome.m_fitness)
-	{
-		m_alpha_genome = bestGenomes[0];
-	}
-	else
-	{
-		// elitism :
-		// here the best (alpha) genome from previous
-		// generation is pushed as an unmodified child
-
-		t_genome	bestDude;
-		bestDude.m_fitness = 0.0f;
-		bestDude.m_id = m_alpha_genome.m_id;
-		bestDude.m_weights = m_alpha_genome.m_weights;
-		bestDude.m_index = current_index++;
-
-		// mutate(bestDude);
-		children.push_back(bestDude);
-	}
+            m_is_a_great_generation = true;
+        }
+        else
+        {
+            m_is_a_great_generation = false;
+        }
 
 
-	{
-		// Carry on the best dude.
-		t_genome	bestDude;
-		bestDude.m_fitness = 0.0f;
-		bestDude.m_id = bestGenomes[0].m_id;
-		bestDude.m_weights = bestGenomes[0].m_weights;
-		bestDude.m_index = current_index++;
+        if (m_best_fitness > m_alpha_genome.m_fitness)
+        {
+            m_alpha_genome = bestGenomes[0];
+        }
+        else
+        {
+            // elitism :
+            // here the best (alpha) genome from previous
+            // generation is pushed as an unmodified child
 
-		mutate(bestDude);
-		children.push_back(bestDude);
-	}
+            t_genome	bestDude;
+            bestDude.m_fitness = 0.0f;
+            bestDude.m_id = m_alpha_genome.m_id;
+            bestDude.m_weights = m_alpha_genome.m_weights;
+            bestDude.m_index = current_index++;
 
+            // mutate(bestDude);
+            children.push_back(bestDude);
+        }
+
+
+        {
+            // Carry on the best dude.
+            t_genome	bestDude;
+            bestDude.m_fitness = 0.0f;
+            bestDude.m_id = bestGenomes[0].m_id;
+            bestDude.m_weights = bestGenomes[0].m_weights;
+            bestDude.m_index = current_index++;
+
+            mutate(bestDude);
+            children.push_back(bestDude);
+        }
+    }
 	// breed best genomes
 
 	for (unsigned int i = 0; i < bestGenomes.size(); ++i)
@@ -174,11 +175,13 @@ void	GeneticAlgorithm::getBestGenomes(unsigned int totalAsked, std::vector<t_gen
 
 	out.clear();
 
-	while (out.size() < totalAsked)
+    unsigned int i = 0;
+
+    while (out.size() < totalAsked && i < m_genomes.size())
 	{
 		float bestFitness = 0;
 		int bestIndex = -1;
-		for (unsigned int i = 0; i < m_genomes.size(); i++)
+        for (i = 0; i < m_genomes.size(); i++)
 			if (m_genomes[i].m_fitness > bestFitness)
 			{
 				bool isUsed = false;

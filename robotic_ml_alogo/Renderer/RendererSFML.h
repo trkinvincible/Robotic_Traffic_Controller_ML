@@ -4,12 +4,16 @@
 
 #include "./TrafficController.h"
 #include <functional>
-
+#include "./utils/utils.hpp"
+#include "./utils/TraceLogger.hpp"
+#include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
 
 class RendererSFML
 {
 private: // attributs
     TrafficController &	mController;
+    sf::Text mEvidenceTextView;
 
 public: // ctor/dtor
     RendererSFML(TrafficController& rk_controller);

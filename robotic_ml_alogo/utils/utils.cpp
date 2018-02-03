@@ -3,6 +3,7 @@
 #include "utils.hpp"
 
 #include <cmath> // cos/sin
+#include <vector>
 
 
 t_vec2f	rotateVec2(const t_vec2f& point, const t_vec2f& center, float angle)
@@ -26,3 +27,20 @@ t_vec2f	lerp(const t_vec2f& p1, const t_vec2f& p2, float ratio)
 	return ret_val;
 }
 
+std::vector<float> sigmoid (const std::vector <float>& m1) {
+
+    /*  Returns the value of the sigmoid function f(x) = 1/(1 + e^-x).
+        Input: m1, a vector.
+        Output: 1/(1 + e^-x) for every element of the input matrix m1.
+    */
+
+    const unsigned long VECTOR_SIZE = m1.size();
+    std::vector <float> output (VECTOR_SIZE);
+
+
+    for( unsigned i = 0; i != VECTOR_SIZE; ++i ) {
+        output[ i ] = log(1 + exp(-m1[ i ]));
+    }
+
+    return output;
+}

@@ -1,12 +1,4 @@
-
 #include "RendererSFML.h"
-#include "./utils/utils.hpp"
-#include "./utils/TraceLogger.hpp"
-
-
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
-
 
 namespace
 {
@@ -46,18 +38,31 @@ void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color
     const t_vec2f& position = vehical.getPosition();
     float radius = vehical.getRadius();
 
-    sf::Color col = (vehical.isAlive() ? sf::Color::Green : sf::Color::Yellow);
-
     sf::CircleShape circle;
     circle.setRadius(radius);
     circle.setOutlineColor(sf::Color::Red);
-    circle.setOutlineThickness(5);
-    circle.setFillColor(col);
-    circle.setPosition(position.x-(20.0f), position.y-(20.0f));
+    circle.setOutlineThickness(3);
+    circle.setFillColor(color);
+    circle.setPosition(position.x-(radius), position.y-(radius));
+
     rwindow.draw(circle);
 
-    if (!vehical.isAlive() || !render_sensors)
+    if (!vehical.isAlive() || !render_sensors){
+#if 0
+        sf::Font font;
+        font.loadFromFile("./arial.ttf");
+        sf::Text text;
+        text.setFont(font);
+        text.setColor(sf::Color::Red);
+        text.setPosition(position.x-(radius), position.y-(radius));
+        std::string f;
+        std::stringstream ss(f);
+        ss<<vehical.getFitness();
+        text.setString(ss.str());
+        rwindow.draw(text);
+#endif
         return;
+    }
 
     const Robots::t_sensors&	sensors = vehical.getSensors();
 
@@ -79,6 +84,17 @@ void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color
 
         drawPoint(rwindow, pos, sf::Color::Yellow);
     }
+    sf::Font font;
+    font.loadFromFile("./arial.ttf");
+    sf::Text text;
+    text.setFont(font);
+    text.setColor(sf::Color::White);
+    text.setPosition(position.x-(radius), position.y-(radius));
+    std::string f;
+    std::stringstream ss(f);
+    ss<<vehical.getFitness();
+    text.setString(ss.str());
+    rwindow.draw(text);
 }
 
 void drawSquare(sf::RenderWindow& rwindow,int side,int x,int y)
@@ -122,6 +138,11 @@ void drawGrap(sf::RenderWindow& rwindow,const std::pair<int,int> &grid_degree,in
 RendererSFML::RendererSFML(TrafficController& rk_controller)
     : mController(rk_controller)
 {
+    sf::Font font;
+    font.loadFromFile("./arial.ttf");
+    mEvidenceTextView.setFont(font);
+    mEvidenceTextView.setColor(sf::Color::White);
+    mEvidenceTextView.setPosition(1000,50);
 }
 
 void  RendererSFML::run(std::function<void()> callback)
@@ -152,15 +173,15 @@ void  RendererSFML::run(std::function<void()> callback)
         window.setActive();
         //Update Cordinates for drawning
         {
-            for (int i = 0; i < 50; ++i)
+            for (int i = 0; i < 1; ++i)
                 callback();
         }
         // Clear screen
         window.clear();
 
         // render circuit
-        std::pair<int,int> grid_degree = std::make_pair<int,int>(2,5);
-        std::vector<int> skip_index = {2,3,4,8};
+        std::pair<int,int> grid_degree = std::make_pair<int,int>(5,5);
+        std::vector<int> skip_index;// = {2,3,4,8};
         drawGrap(window,grid_degree,150,skip_index);
 
         //Get the fittest Robot
@@ -180,42 +201,51 @@ void  RendererSFML::run(std::function<void()> callback)
         }
         //render robots
         {
-            // render cars (except targetted car)
+            // render robots (except targetted robot)
             auto vec_robots = mController.getTragetVechicals();
             for (int index = 0; index < static_cast<int>(vec_robots.size()); ++index)
                 if (index != index_target_robot)
-                    drawRobot(window, vec_robots[index], sf::Color::Green, false);
+                    drawRobot(window, vec_robots[index], sf::Color::Yellow, false);
 
-            // render targetted car
-            if (index_target_robot != -1)
-                drawRobot(window, vec_robots[index_target_robot], sf::Color::Blue, true);
+            // render targetted robot
+            if (index_target_robot != -1){
+                sf::Color b;
+                b.g*=2.0f;
+                drawRobot(window, vec_robots[index_target_robot], b, true);
+            }
 
-            sf::Font font;
-            font.loadFromFile("./arial.ttf");
-
-            sf::Text text;
-
-            text.setFont(font);
 
             std::string s;
             std::stringstream ss(s);
 
-            ss << std::string("NN output[0]: ") << vec_robots[index_target_robot].getNNOutPut().at(0) << std::endl;
-            ss << std::string("NN output[1]: ") << vec_robots[index_target_robot].getNNOutPut().at(1) << std::endl;
+            //ss << std::string("NN output[0]: ") << vec_robots[index_target_robot].getNNOutPut().at(0) << std::endl;
+            //ss << std::string("NN output[1]: ") << vec_robots[index_target_robot].getNNOutPut().at(1) << std::endl;
 
-            ss << std::string("Sensor-back: ") << vec_robots[index_target_robot].getSensors().at(0).m_value << std::endl;
-            ss << std::string("Sensor-down: ") << vec_robots[index_target_robot].getSensors().at(1).m_value << std::endl;
-            ss << std::string("Sensor-right: ") << vec_robots[index_target_robot].getSensors().at(2).m_value << std::endl;
-            ss << std::string("Sensor-top: ") << vec_robots[index_target_robot].getSensors().at(3).m_value << std::endl;
+            //ss << std::string("Sensor-back: ") << vec_robots[index_target_robot].getSensors().at(0).m_value << std::endl;
+            //ss << std::string("Sensor-down: ") << vec_robots[index_target_robot].getSensors().at(1).m_value << std::endl;
+            //ss << std::string("Sensor-right: ") << vec_robots[index_target_robot].getSensors().at(2).m_value << std::endl;
+            //ss << std::string("Sensor-top: ") << vec_robots[index_target_robot].getSensors().at(3).m_value << std::endl;
 
+            ss << std::string("Robot ") << index_target_robot << std::string("  is Alive") << std::endl;
 
-            text.setString(ss.str());
+            //ss << std::string("Robot X: ") << vec_robots[index_target_robot].getPosition().x << std::endl;
+            //ss << std::string("Robot Y: ") << vec_robots[index_target_robot].getPosition().y << std::endl;
 
-            text.setColor(sf::Color::White);
+            ss << std::string("Generation: ") << mController.getCurrentGeneration() << std::endl;
 
-            text.setPosition(50,550);
+            ss << std::string("Robot Fitness: ") << vec_robots[index_target_robot].getFitness() << std::endl;
 
-            window.draw(text);
+            //ss << std::string("Robot Distance: ") << vec_robots[index_target_robot].getdistance() << std::endl;
+
+            ss << std::string("Robot total update: ") << vec_robots[index_target_robot].getTotalUpdates() << std::endl;
+
+            ss << std::string("Robot Status: ") << vec_robots[index_target_robot].getLog() << std::endl;
+
+            ss << std::string("Success Rate: ") << mController.getSuccessRate() << std::endl;
+
+            mEvidenceTextView.setString(ss.str());
+
+            window.draw(mEvidenceTextView);
         }
         // End the current frame and display its contents on screen
         window.display();

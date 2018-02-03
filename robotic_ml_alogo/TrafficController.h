@@ -16,6 +16,9 @@ private:
 public:
     TrafficController(const std::string &filename);
 public: // methods
+    int success_rate;
+    inline int getSuccessRate() const { return success_rate; }
+    bool someone_is_alive;
     void	update(float step);
 public: // setter/getter
     inline const Circuit& getCircuit() const { return mCircuit; }

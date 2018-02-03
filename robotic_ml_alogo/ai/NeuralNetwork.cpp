@@ -98,7 +98,7 @@ void NeuralNetwork::process(const std::vector<float>& input, std::vector<float>&
 	}
 
 	// process output layer
-	//
+    //
 }
 
 void NeuralNetwork::setWeights(const std::vector<float>& in_weights)

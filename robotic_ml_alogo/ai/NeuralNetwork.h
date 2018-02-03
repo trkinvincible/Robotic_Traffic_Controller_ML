@@ -20,7 +20,7 @@ private: // internal structures
 
 private: // attributs
 
-	std::vector<t_layer>	m_layerHidden;
+    std::vector<t_layer>	m_layerHidden;
 	t_layer					m_layerOutput;
 
 	const NeuralNetworkTopology&	m_topology;

@@ -1,4 +1,5 @@
 #include "TrafficController.h"
+#include <unistd.h>
 
 TrafficController::TrafficController(const std::string &filename)
 {
@@ -26,15 +27,15 @@ TrafficController::TrafficController(const std::string &filename)
     {
         Robots& V = mTragetVechicals[i];
         V.reset(mCircuit);
-        V.setDestination(t_vec2f(950,350));
-//        V.setSource(t_vec2f(200.0f-(V.getRadius()/2.0f),200.0f-(V.getRadius()/2.0f)));
         V.setSource(t_vec2f(200.0f,200.0f));
+        V.setDestination(t_vec2f(950,650));
     }
+    success_rate = 0;
 }
 
 void TrafficController::update(float step)
 {
-    bool	someone_is_alive = false;
+    someone_is_alive = false;
 
     #pragma omp parallel for //num_threads(3)
     {
@@ -51,11 +52,14 @@ void TrafficController::update(float step)
             someone_is_alive = true;
 
             mTragetVechicals[i].update(step, mCircuit, mGenAlgo.getNNetworks()[i]);
+            success_rate+=mTragetVechicals[i].getsuccess_rate();
         }
     }
 
     if (someone_is_alive)
         return;
+
+//    sleep(3);
 
     // rate genomes
     for (unsigned int i = 0; i < mTragetVechicals.size(); ++i)
@@ -63,10 +67,6 @@ void TrafficController::update(float step)
 
     mGenAlgo.BreedPopulation();
 
-    if (mGenAlgo.isAGreatGeneration())
-    {
-        Robots& car = mTragetVechicals[ mGenAlgo.getAlpha().m_index ];
-    }
 
     for (Robots& car : mTragetVechicals)
         car.reset(mCircuit);
