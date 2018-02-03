@@ -33,7 +33,7 @@ void drawLine(sf::RenderWindow& rwindow, const t_line& line, const sf::Color& co
     rwindow.draw(recline);
 }
 
-void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color& color,bool render_sensors)
+void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color& color,bool render_sensors,sf::Font &font)
 {
     const t_vec2f& position = vehical.getPosition();
     float radius = vehical.getRadius();
@@ -84,12 +84,10 @@ void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color
 
         drawPoint(rwindow, pos, sf::Color::Yellow);
     }
-    sf::Font font;
-    font.loadFromFile("./arial.ttf");
     sf::Text text;
     text.setFont(font);
     text.setColor(sf::Color::White);
-    text.setPosition(position.x-(radius), position.y-(radius));
+    text.setPosition(position.x, position.y);
     std::string f;
     std::stringstream ss(f);
     ss<<vehical.getFitness();
@@ -102,7 +100,7 @@ void drawSquare(sf::RenderWindow& rwindow,int side,int x,int y)
     sf::RectangleShape rectangle;
     rectangle.setSize(sf::Vector2f(side,side));
     rectangle.setOutlineColor(sf::Color::Red);
-    rectangle.setOutlineThickness(5);
+    rectangle.setOutlineThickness(4);
     rectangle.setPosition(x, y);
     rectangle.setFillColor(sf::Color());
     rwindow.draw(rectangle);
@@ -132,7 +130,7 @@ void drawGrap(sf::RenderWindow& rwindow,const std::pair<int,int> &grid_degree,in
 }
 
 
-}; // namespace
+} // namespace
 
 
 RendererSFML::RendererSFML(TrafficController& rk_controller)
@@ -146,9 +144,9 @@ void  RendererSFML::run(std::function<void()> callback)
     const std::vector<t_vec2f>&	checkpoints = mController.getCircuit().getCheckpoints();
 
     sf::Text Textview;
-    Textview.setFont(font);
+    Textview.setFont(mFont);
     Textview.setColor(sf::Color::White);
-    Textview.setPosition(1000,50);
+    Textview.setPosition(1100,500);
     // Create the main window
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
 
@@ -205,13 +203,13 @@ void  RendererSFML::run(std::function<void()> callback)
             auto vec_robots = mController.getTragetVechicals();
             for (int index = 0; index < static_cast<int>(vec_robots.size()); ++index)
                 if (index != index_target_robot)
-                    drawRobot(window, vec_robots[index], sf::Color::Yellow, false);
+                    drawRobot(window, vec_robots[index], sf::Color::Yellow, false,mFont);
 
             // render targetted robot
             if (index_target_robot != -1){
-                sf::Color b;
+                sf::Color b = sf::Color::Blue;
                 b.g*=2.0f;
-                drawRobot(window, vec_robots[index_target_robot], b, true);
+                drawRobot(window, vec_robots[index_target_robot], b, true,mFont);
             }
 
 

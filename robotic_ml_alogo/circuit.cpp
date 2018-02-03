@@ -35,8 +35,38 @@ bool Circuit::LoadPath(std::string filename)
         sstr >> label;
 
         //Nodes
-        if (label == "node")
-        {
+        if (label == "start"){
+
+            std::vector<float> vals;
+            float val;
+            while (sstr >> val){
+
+                if (std::isnan(val)){
+
+                    return false;
+                }
+                vals.push_back(val);
+            }
+            mStartPosition.x = vals[0];
+            mStartPosition.y = vals[1];
+
+        }if (label == "stop"){
+
+            std::vector<float> vals;
+            float val;
+            while (sstr >> val){
+
+                if (std::isnan(val)){
+
+                    return false;
+                }
+                vals.push_back(val);
+            }
+            mStopPosition.x = vals[0];
+            mStopPosition.y = vals[1];
+
+        }else if (label == "node"){
+
             std::vector<float> vals;
             float val;
             while (sstr >> val)

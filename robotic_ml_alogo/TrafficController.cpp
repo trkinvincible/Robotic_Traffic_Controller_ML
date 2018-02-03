@@ -27,8 +27,6 @@ TrafficController::TrafficController(const std::string &filename)
     {
         Robots& V = mTragetVechicals[i];
         V.reset(mCircuit);
-        V.setSource(t_vec2f(200.0f,200.0f));
-        V.setDestination(t_vec2f(950,650));
     }
     success_rate = 0;
 }
@@ -59,7 +57,7 @@ void TrafficController::update(float step)
     if (someone_is_alive)
         return;
 
-//    sleep(3);
+    //sleep(3);
 
     // rate genomes
     for (unsigned int i = 0; i < mTragetVechicals.size(); ++i)

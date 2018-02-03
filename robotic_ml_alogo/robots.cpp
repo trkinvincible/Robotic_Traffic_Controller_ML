@@ -21,24 +21,25 @@ Robots::Robots()
     success_rate = 0;
     m_current_checkpoint = 0 ;
     mPreviousColumnPos = 0;
-
 }
 
 void Robots::updateFitness()
 {
+#if 0
+    if (m_current_checkpoint < 6/*no. of columsn*/)
+    {
+        m_current_checkpoint = isDistantNode(m_position,t_vec2f(200.f,200.f));
+        if(m_current_checkpoint > mPreviousColumnPos)
+        {
+            ++m_fitness;
+            mPreviousColumnPos = m_current_checkpoint;
+        }
+    }else{
+        m_alive = false;
+    }
+#endif
 
-//    if (m_current_checkpoint < 6/*no. of columsn*/)
-//    {
-//        m_current_checkpoint = isDistantNode(m_position,t_vec2f(200.f,200.f));
-//        if(m_current_checkpoint > mPreviousColumnPos)
-//        {
-//            ++m_fitness;
-//            mPreviousColumnPos = m_current_checkpoint;
-//        }
-//    }else{
-//        m_alive = false;
-//    }
-
+    //credit the robo which getting close to its destination
     int distancex = (mDestination.x - m_position.x) * (mDestination.x - m_position.x);
     int distancey = (mDestination.y - m_position.y) * (mDestination.y - m_position.y);
 
@@ -47,15 +48,16 @@ void Robots::updateFitness()
 
         mBestDistance = distance;
         ++m_fitness;
-    }/*else if(mBestDistance > 150){
+    }else if(mBestDistance > 150){
 
+        //when they move away reduce fitness
         --m_fitness;
-    }*/
+    }
     //Destination reached?
     if (isSameNode(m_position,mDestination))
     {
-        // this line reward a faster car once the circuit is completed
-        m_fitness += 1000.0f;// / m_total_updates);
+        // this line reward a faster robo once the mission is completed
+        m_fitness += 1000.0f / m_total_updates;
         m_alive = false;
         sleep(2);
         success_rate++;
@@ -90,7 +92,7 @@ void	Robots::collideNodes(const Circuit& circuit)
             void_sensor_count++;
         }
     }
-    //3 sides have not nodes to go
+    //3 sides have NO nodes to go
     if(void_sensor_count >= 3){
 
         m_alive = false;
@@ -152,10 +154,8 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     std::stringstream ss(info);
 
     std::bitset<4> no_of_side_unlocked;
-    int i=3;
+    int i = 3;
     for (t_sensor& sensor : m_sensors){
-
-//        ss << sensor.m_value << "\t";
 
         if(sensor.m_value == 1){
 
@@ -190,28 +190,24 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
 
 #if 1
     //std::lock_guard<std::mutex> lock(mtx);
-//    std::string output_file("../../output.txt");
-//    std::ofstream myfile(output_file,std::fstream::app);
+    //std::string output_file("../../output.txt");
+    //std::ofstream myfile(output_file,std::fstream::app);
     //ss << std::abs(output.at(0)-output.at(1)) << std::endl;
     ss << "available directions: " << no_of_side_unlocked.to_string();
     ss << "\tdirection: " << direction << std::endl;
     mLog = ss.str();
-//    myfile << ss.str();
-//    myfile.close();
+    //myfile << ss.str();
+    //myfile.close();
 #endif
 
     if (no_of_side_unlocked.test(direction) == false){
 
         std::cout << "No luck!!!" << std::endl;
 
-        if(mCurrentAngle == 0){
-            m_position.x += (dummy_speed /** cosf(m_angle)*/);
-        }else if(mCurrentAngle == 90){
-            m_position.y += (dummy_speed /** sinf(m_angle)*/);
-        }else if(mCurrentAngle == 180){
-            m_position.x -= (dummy_speed /** cosf(m_angle)*/);
-        }else if(mCurrentAngle == 270){
-            m_position.y -= (dummy_speed /** sinf(m_angle)*/);
+        if(mCurrentAngle == 0 || mCurrentAngle == 180){
+            m_position.x += (dummy_speed * cosf(m_angle));
+        }else if(mCurrentAngle == 90 || mCurrentAngle == 270){
+            m_position.y += (dummy_speed * sinf(m_angle));
         }
         return;
     }
@@ -236,8 +232,8 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
 
 void Robots::reset(const Circuit& circuit)
 {
-    setSource(t_vec2f(200.0f,200.0f));
-    setDestination(t_vec2f(950,650));
+    setSource(circuit.getStartingPositon());
+    setDestination(circuit.getStoppingPositon());
     m_alive = true;
     m_fitness = 0;
     m_total_updates = 0;

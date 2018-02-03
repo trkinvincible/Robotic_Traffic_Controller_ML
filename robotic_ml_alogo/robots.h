@@ -73,7 +73,7 @@ public: // setter/getter
     inline std::string	getLog() const { return mLog; }
     inline int	getsuccess_rate() const { return success_rate; }
 
-    inline const int	getRadius() const { return 20; }
+    inline const int	getRadius() const { return 30; }
     inline const t_vec2f&	getPosition() const { return m_position; }
     inline float			getAngle() const { return m_angle; }
 
