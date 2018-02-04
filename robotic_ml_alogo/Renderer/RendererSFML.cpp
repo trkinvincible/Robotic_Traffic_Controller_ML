@@ -222,6 +222,8 @@ void  RendererSFML::run(std::function<void()> callback)
                  circle1.setRadius(25);
                  circle1.setFillColor(some_colors.at(color_index));
 
+                 index_target_robot = index_fittest_robots.at(vehicle_count);
+
                  // render robots (except targetted robot)
                  for (int index = 0; index < static_cast<int>(vec_robots.size()); ++index)
                      if (index != index_fittest_robots.at(vehicle_count)){
@@ -258,13 +260,12 @@ void  RendererSFML::run(std::function<void()> callback)
                  //ss << std::string("Robot X: ") << vec_robots[index_target_robot].getPosition().x << std::endl;
                  //ss << std::string("Robot Y: ") << vec_robots[index_target_robot].getPosition().y << std::endl;
 
-                 ss << std::string("Generation: ") << mController.getCurrentGeneration() << std::endl;
+                 ss << std::string("Generation: ") << mController.getCurrentGeneration(vehicle_count) << std::endl;
 
                  ss << std::string("Robot Fitness: ") << vec_robots[index_target_robot].getFitness() << std::endl;
 
-                 //ss << std::string("Robot Distance: ") << vec_robots[index_target_robot].getdistance() << std::endl;
-
-                 ss << std::string("Robot total update: ") << vec_robots[index_target_robot].getTotalUpdates() << std::endl;
+                 //ss << std::string("Robot total update: ") << vec_robots[index_target_robot].getTotalUpdates() << std::endl;
+                 ss << std::string("Robot trapped count: ") << vec_robots[index_target_robot].gettrappedcount() << std::endl;
 
                  ss << std::string("Robot Status: ") << vec_robots[index_target_robot].getLog() << std::endl;
 

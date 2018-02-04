@@ -40,13 +40,13 @@ bool isSameNode(t_vec2f A, t_vec2f B)
     bool yes=false;
 
     int x_diff = std::abs(A.x - B.x);
-    if(x_diff >=0 && x_diff <=30) {
+    if(x_diff >=0 && x_diff <=50) {
 
         yes=true;
     }
     if(yes){
         int y_diff = std::abs(A.y-B.y);
-        if(y_diff >=0 && y_diff <=30) {
+        if(y_diff >=0 && y_diff <=50) {
 
             return true;
         }

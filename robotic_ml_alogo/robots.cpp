@@ -48,6 +48,7 @@ void Robots::updateFitness()
 
         mBestDistance = distance;
         ++m_fitness;
+        trapped_count=0;
     }else if(mBestDistance > 150){
 
         //when they move away reduce fitness
@@ -259,11 +260,13 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
         m_position.y += (speed * sinf(m_angle));
     }
 
-    ++m_total_updates;
+    ++m_total_updates;trapped_count++;
 
     if(m_total_updates > 20 && m_fitness < 2) m_alive=false;
 
     if(m_total_updates > 200) m_alive=false;
+
+    if(trapped_count >= 7) m_alive=false;
 }
 
 void Robots::reset(const t_vec2f start,const t_vec2f stop)
@@ -277,4 +280,5 @@ void Robots::reset(const t_vec2f start,const t_vec2f stop)
     m_min_updates = 50;
     m_current_checkpoint = 0;
     success_rate = 0;
+    trapped_count = 0;
 }

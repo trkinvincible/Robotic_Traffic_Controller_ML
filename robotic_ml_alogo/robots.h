@@ -65,6 +65,7 @@ private: // methods
 
 public: // setter/getter
     int success_rate;
+    int trapped_count;
 
     int mCurrentAngle;
     float mDistancetoTarget;
@@ -72,6 +73,7 @@ public: // setter/getter
     std::string mLog;
     inline std::string	getLog() const { return mLog; }
     inline int	getsuccess_rate() const { return success_rate; }
+    inline int	gettrappedcount() const { return trapped_count; }
 
     inline const int	getRadius() const { return 25; }
     inline const t_vec2f&	getPosition() const { return m_position; }
