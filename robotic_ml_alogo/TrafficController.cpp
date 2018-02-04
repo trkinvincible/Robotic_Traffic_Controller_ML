@@ -51,7 +51,7 @@ void TrafficController::update(float step)
 
         someone_is_alive = false;
 
-        #pragma omp parallel for //num_threads(3)
+        //#pragma omp parallel for //num_threads(3)
         {
             // This code will be executed by three threads.
 

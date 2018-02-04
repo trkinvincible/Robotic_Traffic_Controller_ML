@@ -24,8 +24,9 @@ public: // external structures
 private: // attributs
 
     //destination values
+    t_vec2f mSource;
     t_vec2f mDestination;
-    float mPreviousColumnPos;
+
     t_vec2f	m_position;
     int	m_angle;
     float	m_fitness;
@@ -36,7 +37,8 @@ private: // attributs
     // TODO : use enumeration
     t_sensors	m_sensors;
 
-    unsigned int	m_current_checkpoint;
+    unsigned int	m_current_checkpointX;
+    unsigned int	m_current_checkpointY;
 
     std::vector<t_line>	m_trail;
 //    std::mutex mtx;
@@ -45,6 +47,7 @@ public: // ctor/dtor
     Robots();
 
 public: // methods
+    static int max_fitness_robo;
     std::vector<float> getNNOutPut(){return mDisplay_Output;}
     void    setDestination(t_vec2f dest){
         mDestination = dest;
@@ -54,7 +57,7 @@ public: // methods
 
         mBestDistance = mDistancetoTarget = std::sqrt(distancex + distancey);
     }
-    void    setSource(t_vec2f src){m_position = src;}
+    void    setSource(t_vec2f src){mSource = m_position = src;}
     void	update(float step, const Circuit& circuit, const NeuralNetwork& nn);
     void	reset(const t_vec2f start,const t_vec2f stop);
 

@@ -16,28 +16,32 @@
 
 std::map<int,int> direction_angles={{0,270},{1,0},{2,90},{3,180}};
 
+int Robots::max_fitness_robo=-1;
+
 Robots::Robots()
 {
     success_rate = 0;
-    m_current_checkpoint = 0 ;
-    mPreviousColumnPos = 0;
+    m_current_checkpointX = 0 ;
+    m_current_checkpointY = 0 ;
 }
 
 void Robots::updateFitness()
 {
-#if 0
-    if (m_current_checkpoint < 6/*no. of columsn*/)
+    int x_pos = isDistantNodeX(m_position,mSource);
+    int y_pos = isDistantNodeY(m_position,mSource);
+
+    if(x_pos > m_current_checkpointX)
     {
-        m_current_checkpoint = isDistantNode(m_position,t_vec2f(200.f,200.f));
-        if(m_current_checkpoint > mPreviousColumnPos)
-        {
-            ++m_fitness;
-            mPreviousColumnPos = m_current_checkpoint;
-        }
-    }else{
-        m_alive = false;
+        trapped_count = 0;
+        m_current_checkpointX = x_pos;
     }
-#endif
+    if(y_pos > m_current_checkpointY)
+    {
+        trapped_count = 0;
+        m_current_checkpointY = y_pos;
+    }
+
+    if(!m_alive) return;
 
     //credit the robo which getting close to its destination
     int distancex = (mDestination.x - m_position.x) * (mDestination.x - m_position.x);
@@ -49,6 +53,10 @@ void Robots::updateFitness()
         mBestDistance = distance;
         ++m_fitness;
         trapped_count=0;
+        if(max_fitness_robo < m_fitness)
+        {
+            max_fitness_robo = m_fitness;
+        }
     }else if(mBestDistance > 150){
 
         //when they move away reduce fitness
@@ -63,6 +71,7 @@ void Robots::updateFitness()
         m_alive = false;
         sleep(2);
         success_rate++;
+
     }
 }
 
@@ -98,6 +107,12 @@ void	Robots::collideNodes(const Circuit& circuit)
     if(void_sensor_count >= 3){
 
         m_alive = false;
+        float diff = std::min(0.0f,max_fitness_robo - m_fitness);
+        if(diff > 0.0f && diff < 50.0f){
+            max_fitness_robo = -1;
+
+        }
+//        sleep(2);
     }
 }
 
@@ -176,12 +191,12 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     if (std::isnan(m_position.x) ||std::isnan(m_position.y))
         m_alive = false;
 
-    if (!m_alive)
-        return;
-
     this->updateSensors();
     this->collideNodes(circuit);
     this->updateFitness();
+
+    if (!m_alive)
+        return;
 
     //Core Logic is here
     std::vector<float>	input;
@@ -218,11 +233,11 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     float speed;
     float dummy_speed;
     if(unlocked_count >= 3 && m_fitness > 1){
-        speed	    = 50.0f;//output[1] % 2;
-        dummy_speed = 1.0f;
+        speed	    = std::min(50.0f,output[1]*10.0f) * 1.5f;
+        dummy_speed = std::min(50.0f,output[1]*10.0f) * 1.5f;
     }else{
-        speed = 50.0f;
-        dummy_speed = 1.0f;
+        speed = std::min(50.0f,output[1]*10.0f) * 1.5f;
+        dummy_speed = std::min(50.0f,output[1]*10.0f) * 1.5f;
     }
 
 #if 1
@@ -239,8 +254,9 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
 
     if (no_of_side_unlocked.test(direction) == false){
 
-        std::cout << "No luck!!!" << std::endl;
+//        std::cout << "No luck!!!" << std::endl;
 
+        if(trapped_count++ > 5) m_alive = false;
         if(mCurrentAngle == 0 || mCurrentAngle == 180){
             m_position.x += (dummy_speed * cosf(m_angle));
         }else if(mCurrentAngle == 90 || mCurrentAngle == 270){
@@ -262,11 +278,8 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
 
     ++m_total_updates;trapped_count++;
 
-    if(m_total_updates > 20 && m_fitness < 2) m_alive=false;
 
-    if(m_total_updates > 200) m_alive=false;
-
-    if(trapped_count >= 7) m_alive=false;
+    if(trapped_count >= 50) m_alive=false;
 }
 
 void Robots::reset(const t_vec2f start,const t_vec2f stop)
@@ -278,7 +291,9 @@ void Robots::reset(const t_vec2f start,const t_vec2f stop)
     m_total_updates = 0;
     m_trail.clear();
     m_min_updates = 50;
-    m_current_checkpoint = 0;
+    m_current_checkpointX = 0;
+    m_current_checkpointY = 0;
     success_rate = 0;
     trapped_count = 0;
+    max_fitness_robo = -1;
 }

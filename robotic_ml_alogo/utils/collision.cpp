@@ -25,12 +25,22 @@
 // UNUSED AS SLOWER
 //
 
-float isDistantNode(t_vec2f A, t_vec2f B)
+float isDistantNodeX(t_vec2f A, t_vec2f B)
 {
     int diff = std::abs(A.x - B.x);
     int columns_crossed=0;
     if(diff > 0)
-         columns_crossed = diff / 150;
+         columns_crossed = diff / 75;
+
+    return columns_crossed;
+}
+
+float isDistantNodeY(t_vec2f A, t_vec2f B)
+{
+    int diff = std::abs(A.y - B.y);
+    int columns_crossed=0;
+    if(diff > 0)
+         columns_crossed = diff / 75;
 
     return columns_crossed;
 }

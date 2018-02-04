@@ -5,7 +5,8 @@
 
 
 #include "t_vec2f.hpp"
-float    isDistantNode(t_vec2f A, t_vec2f B);
+float    isDistantNodeX(t_vec2f A, t_vec2f B);
+float    isDistantNodeY(t_vec2f A, t_vec2f B);
 bool    isSameNode(t_vec2f A, t_vec2f B);
 bool    isPointOntheLine(t_vec2f A, t_vec2f B, t_vec2f C);
 bool	CollisionLineSeg(const t_vec2f& A, const t_vec2f& B, const t_vec2f& O, const t_vec2f& P);

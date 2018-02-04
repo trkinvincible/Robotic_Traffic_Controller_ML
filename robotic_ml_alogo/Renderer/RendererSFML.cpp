@@ -181,7 +181,7 @@ void  RendererSFML::run(std::function<void()> callback)
 
         // render circuit
         std::pair<int,int> grid_degree = std::make_pair<int,int>(5,5);
-        std::vector<int> skip_index;// = {2,3,4,8};
+        std::vector<int> skip_index = {1,2,4,5,6,10,16,20,21,22,24,25};
         drawGrap(window,grid_degree,150,skip_index);
 
         std::vector<int> index_fittest_robots;
@@ -270,6 +270,8 @@ void  RendererSFML::run(std::function<void()> callback)
                  ss << std::string("Robot Status: ") << vec_robots[index_target_robot].getLog() << std::endl;
 
                  ss << std::string("Success Rate: ") << mController.getSuccessRate() << std::endl;
+
+                 //ss << std::string("Max fitness ") << Robots::max_fitness_robo << std::endl;
 
                  Textview.setString(ss.str());
 
