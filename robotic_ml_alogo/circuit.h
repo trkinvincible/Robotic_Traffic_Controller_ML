@@ -4,16 +4,15 @@
 #include <vector>
 #include <string>
 #include "./utils/t_line.hpp"
-
+#include <list>
 
 class Circuit
 {
-    typedef std::vector<t_vec2f> points;
+    typedef std::vector<t_vec2f> nodes;
+    typedef std::vector<std::vector<t_vec2f>> l_start_stop;
 private:
-    points mNodes;
-    t_vec2f mStartPosition;
-    float mStartAngle;
-    t_vec2f mStopPosition;
+    nodes mNodes;
+    l_start_stop mStartStopPositions;
     bool misValid;
 public:
     Circuit();
@@ -21,9 +20,8 @@ public:
 public:
     // setter/getter
     inline bool	isValid() const { return misValid; }
-    inline const points&	getCheckpoints() const { return mNodes; }
-    inline const t_vec2f&	getStartingPositon() const { return mStartPosition; }
-    inline const t_vec2f&	getStoppingPositon() const { return mStopPosition; }
+    inline const nodes&	getCheckpoints() const { return mNodes; }
+    inline const l_start_stop&	getStartStopPositions() const { return mStartStopPositions; }
 };
 
 #endif // CIRCUIT_H

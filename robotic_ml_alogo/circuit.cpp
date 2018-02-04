@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <iostream>
 
 Circuit::Circuit()
 {
@@ -37,33 +38,53 @@ bool Circuit::LoadPath(std::string filename)
         //Nodes
         if (label == "start"){
 
-            std::vector<float> vals;
-            float val;
-            while (sstr >> val){
+            t_vec2f start,stop;
 
+            float val;
+            int i=1;
+            std::vector<float> vals;
+            while (i <= 2){
+
+                sstr >> val;
                 if (std::isnan(val)){
 
                     return false;
                 }
                 vals.push_back(val);
+                i++;
             }
-            mStartPosition.x = vals[0];
-            mStartPosition.y = vals[1];
+            start.x = vals.at(0);
+            start.y = vals.at(1);
 
-        }if (label == "stop"){
+            sstr >> label;
 
-            std::vector<float> vals;
-            float val;
-            while (sstr >> val){
+            if (label == "stop"){
 
-                if (std::isnan(val)){
+                float val;
+                int i=1;
+                std::vector<float> vals;
+                while (i <= 2){
 
-                    return false;
+                    sstr >> val;
+                    if (std::isnan(val)){
+
+                        return false;
+                    }
+                    vals.push_back(val);
+                    i++;
                 }
-                vals.push_back(val);
+                stop.x = vals.at(0);
+                stop.y = vals.at(1);
+
+            }else{
+
+                std::cout << "failed No stop" <<std::endl;
             }
-            mStopPosition.x = vals[0];
-            mStopPosition.y = vals[1];
+            nodes pos;
+            pos.push_back(start);
+            pos.push_back(stop);
+
+            mStartStopPositions.push_back(pos);
 
         }else if (label == "node"){
 

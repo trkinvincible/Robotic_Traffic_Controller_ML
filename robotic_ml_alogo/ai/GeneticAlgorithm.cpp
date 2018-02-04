@@ -28,7 +28,7 @@ void	GeneticAlgorithm::init(NeuralNetworkTopology& NNTopology)
 void	GeneticAlgorithm::generateRandomPopulation()
 {
 	// reset the genomes
-    m_genomes.resize(50);
+    m_genomes.resize(15);
 
 	for (unsigned int i = 0; i < m_genomes.size(); ++i)
 	{
@@ -65,7 +65,7 @@ void	GeneticAlgorithm::BreedPopulation()
 		return;
 
 	std::vector<t_genome>	bestGenomes;
-    getBestGenomes(20/*just a min expectation*/, bestGenomes);
+    getBestGenomes(5/*just a min expectation*/, bestGenomes);
 
 
 	std::vector<t_genome>	children;

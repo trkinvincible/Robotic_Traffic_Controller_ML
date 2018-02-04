@@ -9,10 +9,14 @@
 class TrafficController
 {
 private:
+    typedef std::vector<Robots> vec_robots;
+    typedef std::vector<std::vector<Robots>> vec_robots_l;
+
     Circuit mCircuit;
-    std::vector<Robots> mTragetVechicals;
+    vec_robots_l mTargetVehicals;
     NeuralNetworkTopology mNNTopology;
     GeneticAlgorithm mGenAlgo;
+
 public:
     TrafficController(const std::string &filename);
 public: // methods
@@ -22,8 +26,8 @@ public: // methods
     void	update(float step);
 public: // setter/getter
     inline const Circuit& getCircuit() const { return mCircuit; }
-    inline const std::vector<Robots>& getTragetVechicals() const { return mTragetVechicals; }
 
+    inline const vec_robots_l& getTragetVechicals(){return mTargetVehicals;}
     inline unsigned int getCurrentGeneration() const { return mGenAlgo.getCurrentGeneration(); }
     inline unsigned int	getBestFitness() const { return mGenAlgo.getBestFitness(); }
 
