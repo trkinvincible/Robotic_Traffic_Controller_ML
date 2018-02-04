@@ -56,7 +56,7 @@ public: // methods
     }
     void    setSource(t_vec2f src){m_position = src;}
     void	update(float step, const Circuit& circuit, const NeuralNetwork& nn);
-    void	reset(const Circuit& circuit);
+    void	reset(const t_vec2f start,const t_vec2f stop);
 
 private: // methods
     void updateFitness();
@@ -73,7 +73,7 @@ public: // setter/getter
     inline std::string	getLog() const { return mLog; }
     inline int	getsuccess_rate() const { return success_rate; }
 
-    inline const int	getRadius() const { return 30; }
+    inline const int	getRadius() const { return 25; }
     inline const t_vec2f&	getPosition() const { return m_position; }
     inline float			getAngle() const { return m_angle; }
 

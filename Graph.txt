@@ -1,13 +1,17 @@
+
+start 200 200 stop  950 950
+start 200 950 stop  950 200
+
 node  200 200
 node  350 200
-#node  500 200
-#node  650 200
+node  500 200
+node  650 200
 node  800 200
 node  950 200
 node  200 350
 node  350 350
 node  500 350
-#node  650 350
+node  650 350
 node  800 350
 node  950 350
 node  200 500
@@ -16,3 +20,21 @@ node  500 500
 node  650 500
 node  800 500
 node  950 500
+node  200 650
+node  350 650
+node  500 650
+node  650 650
+node  800 650
+node  950 650
+node  200 800
+node  350 800
+node  500 800
+node  650 800
+node  800 800
+node  950 800
+node  200 950
+node  350 950
+node  500 950
+node  650 950
+node  800 950
+node  950 950

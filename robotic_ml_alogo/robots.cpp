@@ -51,7 +51,8 @@ void Robots::updateFitness()
     }else if(mBestDistance > 150){
 
         //when they move away reduce fitness
-        --m_fitness;
+        float temp = m_fitness-1;
+        m_fitness == std::min(0.0f,temp);
     }
     //Destination reached?
     if (isSameNode(m_position,mDestination))
@@ -98,6 +99,41 @@ void	Robots::collideNodes(const Circuit& circuit)
         m_alive = false;
     }
 }
+
+//void	Robots::collideAnotherRobot(const Circuit& circuit)
+//{
+//    int void_sensor_count = 0;
+
+//    for (t_sensor& sensor : m_sensors)
+//    {
+//        t_vec2f_s checkpoints = circuit.getCheckpoints();
+//        for (const t_vec2f& node : checkpoints)
+//        {
+//            t_vec2f src = sensor.m_line.p1;
+//            t_vec2f dst = node;
+//            if(src.x == dst.x && src.y == dst.y)
+//                continue;
+//            bool v = isPointOntheLine(sensor.m_line.p1, sensor.m_line.p2,node);
+
+//            if (v){
+//                sensor.m_value = 1;
+//                //Don check for all possible nodes just check which is near you.
+//                break;
+//            }else{
+//                sensor.m_value = 0;
+//            }
+//        }
+//        if(sensor.m_value == 0){
+
+//            void_sensor_count++;
+//        }
+//    }
+//    //3 sides have NO nodes to go
+//    if(void_sensor_count >= 3){
+
+//        m_alive = false;
+//    }
+//}
 
 void Robots::updateSensors()
 {
@@ -230,10 +266,10 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     if(m_total_updates > 200) m_alive=false;
 }
 
-void Robots::reset(const Circuit& circuit)
+void Robots::reset(const t_vec2f start,const t_vec2f stop)
 {
-    setSource(circuit.getStartingPositon());
-    setDestination(circuit.getStoppingPositon());
+    setSource(start);
+    setDestination(stop);
     m_alive = true;
     m_fitness = 0;
     m_total_updates = 0;

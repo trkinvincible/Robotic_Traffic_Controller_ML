@@ -14,6 +14,8 @@ class RendererSFML
 private: // attributs
     TrafficController &	mController;
     sf::Font mFont;
+    typedef std::vector<Robots> vec_robots;
+    typedef std::vector<std::vector<Robots>> vec_robots_l;
 
 public: // ctor/dtor
     RendererSFML(TrafficController& rk_controller);

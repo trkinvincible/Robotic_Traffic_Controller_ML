@@ -90,7 +90,7 @@ void drawRobot(sf::RenderWindow& rwindow, const Robots& vehical, const sf::Color
     text.setPosition(position.x, position.y);
     std::string f;
     std::stringstream ss(f);
-    ss<<vehical.getFitness();
+    ss<<vehical.getdistance();
     text.setString(ss.str());
     rwindow.draw(text);
 }
@@ -146,7 +146,7 @@ void  RendererSFML::run(std::function<void()> callback)
     sf::Text Textview;
     Textview.setFont(mFont);
     Textview.setColor(sf::Color::White);
-    Textview.setPosition(1100,500);
+
     // Create the main window
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
 
@@ -158,6 +158,8 @@ void  RendererSFML::run(std::function<void()> callback)
 
     while (window.isOpen())
     {
+        Textview.setPosition(1100,300);
+
         // Event processing
         sf::Event event;
         while (window.pollEvent(event))
@@ -182,68 +184,107 @@ void  RendererSFML::run(std::function<void()> callback)
         std::vector<int> skip_index;// = {2,3,4,8};
         drawGrap(window,grid_degree,150,skip_index);
 
+        std::vector<int> index_fittest_robots;
+
         //Get the fittest Robot
         {
-            auto vec_robots = mController.getTragetVechicals();
-            float	curr_fitness = -1;
-            for (unsigned int ii = 0; ii < vec_robots.size(); ++ii)
-            {
-                auto& vehical = vec_robots[ii];
-                if (!vehical.isAlive())
-                    continue;
-                if (curr_fitness > vehical.getFitness())
-                    continue;
-                curr_fitness = vehical.getFitness();
-                index_target_robot = ii;
+            auto vec_vec_robots = mController.getTragetVechicals();
+
+            //competeing robots
+            for(vec_robots &vec_robots : vec_vec_robots){
+
+                float	curr_fitness = -1;
+                for (unsigned int ii = 0; ii < vec_robots.size(); ++ii)
+                {
+                    auto& vehical = vec_robots[ii];
+                    if (!vehical.isAlive())
+                        continue;
+                    if (curr_fitness > vehical.getFitness())
+                        continue;
+                    curr_fitness = vehical.getFitness();
+                    index_target_robot = ii;
+                }
+                index_fittest_robots.push_back(index_target_robot);
             }
         }
         //render robots
         {
-            // render robots (except targetted robot)
-            auto vec_robots = mController.getTragetVechicals();
-            for (int index = 0; index < static_cast<int>(vec_robots.size()); ++index)
-                if (index != index_target_robot)
-                    drawRobot(window, vec_robots[index], sf::Color::Yellow, false,mFont);
+             auto vec_vec_robots = mController.getTragetVechicals();
+             std::vector<sf::Color> some_colors={sf::Color::Yellow,sf::Color::Blue,sf::Color::Cyan,sf::Color::Green};
 
-            // render targetted robot
-            if (index_target_robot != -1){
-                sf::Color b = sf::Color::Blue;
-                b.g*=2.0f;
-                drawRobot(window, vec_robots[index_target_robot], b, true,mFont);
-            }
+             int vehicle_count = 0;
+             int color_index=0;
 
+             //competeing robots
+             for(vec_robots &vec_robots : vec_vec_robots){
 
-            std::string s;
-            std::stringstream ss(s);
+                 sf::CircleShape circle1;
+                 circle1.setRadius(25);
+                 circle1.setFillColor(some_colors.at(color_index));
 
-            //ss << std::string("NN output[0]: ") << vec_robots[index_target_robot].getNNOutPut().at(0) << std::endl;
-            //ss << std::string("NN output[1]: ") << vec_robots[index_target_robot].getNNOutPut().at(1) << std::endl;
+                 // render robots (except targetted robot)
+                 for (int index = 0; index < static_cast<int>(vec_robots.size()); ++index)
+                     if (index != index_fittest_robots.at(vehicle_count)){
 
-            //ss << std::string("Sensor-back: ") << vec_robots[index_target_robot].getSensors().at(0).m_value << std::endl;
-            //ss << std::string("Sensor-down: ") << vec_robots[index_target_robot].getSensors().at(1).m_value << std::endl;
-            //ss << std::string("Sensor-right: ") << vec_robots[index_target_robot].getSensors().at(2).m_value << std::endl;
-            //ss << std::string("Sensor-top: ") << vec_robots[index_target_robot].getSensors().at(3).m_value << std::endl;
+                         drawRobot(window, vec_robots[index], some_colors.at(color_index), false,mFont);
+                     }
 
-            ss << std::string("Robot ") << index_target_robot << std::string("  is Alive") << std::endl;
+                 color_index++;
+                 sf::CircleShape circle2;
+                 circle2.setRadius(25);
+                 circle2.setFillColor(some_colors.at(color_index));
 
-            //ss << std::string("Robot X: ") << vec_robots[index_target_robot].getPosition().x << std::endl;
-            //ss << std::string("Robot Y: ") << vec_robots[index_target_robot].getPosition().y << std::endl;
+                 // render targetted robot
+                 if (index_fittest_robots.at(vehicle_count) != -1){
 
-            ss << std::string("Generation: ") << mController.getCurrentGeneration() << std::endl;
+                     drawRobot(window, vec_robots[index_fittest_robots.at(vehicle_count)],some_colors.at(color_index) , true,mFont);
+                 }
 
-            ss << std::string("Robot Fitness: ") << vec_robots[index_target_robot].getFitness() << std::endl;
+                 color_index++;
 
-            //ss << std::string("Robot Distance: ") << vec_robots[index_target_robot].getdistance() << std::endl;
+                 std::string s;
+                 std::stringstream ss(s);
 
-            ss << std::string("Robot total update: ") << vec_robots[index_target_robot].getTotalUpdates() << std::endl;
+                 //ss << std::string("NN output[0]: ") << vec_robots[index_target_robot].getNNOutPut().at(0) << std::endl;
+                 //ss << std::string("NN output[1]: ") << vec_robots[index_target_robot].getNNOutPut().at(1) << std::endl;
 
-            ss << std::string("Robot Status: ") << vec_robots[index_target_robot].getLog() << std::endl;
+                 //ss << std::string("Sensor-back: ") << vec_robots[index_target_robot].getSensors().at(0).m_value << std::endl;
+                 //ss << std::string("Sensor-down: ") << vec_robots[index_target_robot].getSensors().at(1).m_value << std::endl;
+                 //ss << std::string("Sensor-right: ") << vec_robots[index_target_robot].getSensors().at(2).m_value << std::endl;
+                 //ss << std::string("Sensor-top: ") << vec_robots[index_target_robot].getSensors().at(3).m_value << std::endl;
 
-            ss << std::string("Success Rate: ") << mController.getSuccessRate() << std::endl;
+                 ss << std::string("Robot ") << index_target_robot << std::string("  is Alive") << std::endl;
 
-            Textview.setString(ss.str());
+                 //ss << std::string("Robot X: ") << vec_robots[index_target_robot].getPosition().x << std::endl;
+                 //ss << std::string("Robot Y: ") << vec_robots[index_target_robot].getPosition().y << std::endl;
 
-            window.draw(Textview);
+                 ss << std::string("Generation: ") << mController.getCurrentGeneration() << std::endl;
+
+                 ss << std::string("Robot Fitness: ") << vec_robots[index_target_robot].getFitness() << std::endl;
+
+                 //ss << std::string("Robot Distance: ") << vec_robots[index_target_robot].getdistance() << std::endl;
+
+                 ss << std::string("Robot total update: ") << vec_robots[index_target_robot].getTotalUpdates() << std::endl;
+
+                 ss << std::string("Robot Status: ") << vec_robots[index_target_robot].getLog() << std::endl;
+
+                 ss << std::string("Success Rate: ") << mController.getSuccessRate() << std::endl;
+
+                 Textview.setString(ss.str());
+
+                 Textview.setPosition(1100,Textview.getPosition().y + (vehicle_count*300));
+
+                 //display who are competing
+
+                 circle1.setPosition(Textview.getPosition().x, Textview.getPosition().y - 50);
+                 circle2.setPosition(circle1.getPosition().x + 50, circle1.getPosition().y);
+
+                 window.draw(circle1);window.draw(circle2);
+
+                 window.draw(Textview);
+
+                 vehicle_count++;
+             }
         }
         // End the current frame and display its contents on screen
         window.display();
