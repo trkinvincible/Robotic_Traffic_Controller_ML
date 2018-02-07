@@ -11,17 +11,20 @@ class TrafficController
 private:
     typedef std::vector<Robots> vec_robots;
     typedef std::vector<std::vector<Robots>> vec_robots_l;
+    typedef std::vector<std::vector<t_vec2f>> vec_positions;
 
     Circuit mCircuit;
     vec_robots_l mTargetVehicals;
     std::vector<NeuralNetworkTopology> mNNTopology;
     std::vector<GeneticAlgorithm> mGenAlgo;
+    vec_positions mVehicalPositions;
+    int mTotalVehicalsActivated;
 
 public:
     TrafficController(const std::string &filename);
 public: // methods
-    int success_rate;
-    inline int getSuccessRate() const { return success_rate; }
+    std::vector<int> success_rate;
+    inline std::vector<int> getSuccessRate() const { return success_rate; }
     bool someone_is_alive;
     void	update(float step);
 public: // setter/getter

@@ -5,6 +5,7 @@
 #include <array>
 #include "./ai/NeuralNetwork.h"
 #include <mutex>
+#include <vector>
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -58,13 +59,14 @@ public: // methods
         mBestDistance = mDistancetoTarget = std::sqrt(distancex + distancey);
     }
     void    setSource(t_vec2f src){mSource = m_position = src;}
-    void	update(float step, const Circuit& circuit, const NeuralNetwork& nn);
+    void	update(float step, const Circuit& circuit, const NeuralNetwork& nn,std::vector<t_vec2f> oponent_pos);
     void	reset(const t_vec2f start,const t_vec2f stop);
 
 private: // methods
     void updateFitness();
     void updateSensors();
     void collideNodes(const Circuit& circuit);
+    void collideAnotherRobot(const std::vector<t_vec2f> opponent_pos);
 
 public: // setter/getter
     int success_rate;

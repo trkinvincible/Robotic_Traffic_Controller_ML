@@ -30,15 +30,27 @@ void Robots::updateFitness()
     int x_pos = isDistantNodeX(m_position,mSource);
     int y_pos = isDistantNodeY(m_position,mSource);
 
-    if(x_pos > m_current_checkpointX)
+    if(x_pos && x_pos > m_current_checkpointX)
     {
         trapped_count = 0;
         m_current_checkpointX = x_pos;
+    }else{
+
+        if(trapped_count > 15){
+
+            m_alive = false;
+        }
     }
-    if(y_pos > m_current_checkpointY)
+    if(y_pos && y_pos > m_current_checkpointY)
     {
         trapped_count = 0;
         m_current_checkpointY = y_pos;
+    }else{
+
+        if(trapped_count > 15){
+
+            m_alive = false;
+        }
     }
 
     if(!m_alive) return;
@@ -116,40 +128,22 @@ void	Robots::collideNodes(const Circuit& circuit)
     }
 }
 
-//void	Robots::collideAnotherRobot(const Circuit& circuit)
-//{
-//    int void_sensor_count = 0;
+#if 1
+void Robots::collideAnotherRobot(const std::vector<t_vec2f> opponent_pos)
+{
+    int index=0;
+    while(index < opponent_pos.size()){
 
-//    for (t_sensor& sensor : m_sensors)
-//    {
-//        t_vec2f_s checkpoints = circuit.getCheckpoints();
-//        for (const t_vec2f& node : checkpoints)
-//        {
-//            t_vec2f src = sensor.m_line.p1;
-//            t_vec2f dst = node;
-//            if(src.x == dst.x && src.y == dst.y)
-//                continue;
-//            bool v = isPointOntheLine(sensor.m_line.p1, sensor.m_line.p2,node);
+        t_vec2f opp_pos = opponent_pos.at(index);
 
-//            if (v){
-//                sensor.m_value = 1;
-//                //Don check for all possible nodes just check which is near you.
-//                break;
-//            }else{
-//                sensor.m_value = 0;
-//            }
-//        }
-//        if(sensor.m_value == 0){
-
-//            void_sensor_count++;
-//        }
-//    }
-//    //3 sides have NO nodes to go
-//    if(void_sensor_count >= 3){
-
-//        m_alive = false;
-//    }
-//}
+        if (isSameNode(m_position,opp_pos))
+        {
+            m_alive = false;
+        }
+        index++;
+    }
+}
+#endif
 
 void Robots::updateSensors()
 {
@@ -186,13 +180,14 @@ void Robots::updateSensors()
     }
 }
 
-void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_NN)
+void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_NN,std::vector<t_vec2f> oponent_pos)
 {
     if (std::isnan(m_position.x) ||std::isnan(m_position.y))
         m_alive = false;
 
     this->updateSensors();
     this->collideNodes(circuit);
+//    collideAnotherRobot(oponent_pos);
     this->updateFitness();
 
     if (!m_alive)
@@ -233,8 +228,8 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     float speed;
     float dummy_speed;
     if(unlocked_count >= 3 && m_fitness > 1){
-        speed	    = std::min(50.0f,output[1]*10.0f) * 1.5f;
-        dummy_speed = std::min(50.0f,output[1]*10.0f) * 1.5f;
+        speed	    = std::max(50.0f,output[1]*10.0f) * 1.5f;
+        dummy_speed = std::max(50.0f,output[1]*10.0f) * 1.5f;
     }else{
         speed = std::min(50.0f,output[1]*10.0f) * 1.5f;
         dummy_speed = std::min(50.0f,output[1]*10.0f) * 1.5f;
@@ -252,11 +247,12 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     //myfile.close();
 #endif
 
+    ++m_total_updates;
+    trapped_count++;
+
     if (no_of_side_unlocked.test(direction) == false){
 
 //        std::cout << "No luck!!!" << std::endl;
-
-        if(trapped_count++ > 5) m_alive = false;
         if(mCurrentAngle == 0 || mCurrentAngle == 180){
             m_position.x += (dummy_speed * cosf(m_angle));
         }else if(mCurrentAngle == 90 || mCurrentAngle == 270){
@@ -275,11 +271,6 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     }else if(m_angle == 90 || m_angle == 270){
         m_position.y += (speed * sinf(m_angle));
     }
-
-    ++m_total_updates;trapped_count++;
-
-
-    if(trapped_count >= 50) m_alive=false;
 }
 
 void Robots::reset(const t_vec2f start,const t_vec2f stop)

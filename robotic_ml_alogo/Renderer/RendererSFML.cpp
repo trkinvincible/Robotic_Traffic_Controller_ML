@@ -269,7 +269,7 @@ void  RendererSFML::run(std::function<void()> callback)
 
                  ss << std::string("Robot Status: ") << vec_robots[index_target_robot].getLog() << std::endl;
 
-                 ss << std::string("Success Rate: ") << mController.getSuccessRate() << std::endl;
+                 ss << std::string("Success Rate: ") << mController.getSuccessRate().at(vehicle_count) << std::endl;
 
                  //ss << std::string("Max fitness ") << Robots::max_fitness_robo << std::endl;
 

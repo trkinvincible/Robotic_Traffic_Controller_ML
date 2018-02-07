@@ -40,13 +40,15 @@ TrafficController::TrafficController(const std::string &filename)
             robo.reset(pos.at(0),pos.at(1));
         count++;
     }
-
-    success_rate = 0;
+    mTotalVehicalsActivated = count;
+    success_rate.resize(mTotalVehicalsActivated);
+    mVehicalPositions.resize(mTotalVehicalsActivated);
 }
 
 void TrafficController::update(float step)
 {
     int vehicle_count = 0;
+
     for(vec_robots &vec_robs : mTargetVehicals){
 
         someone_is_alive = false;
@@ -58,6 +60,9 @@ void TrafficController::update(float step)
             // Chunks of this loop will be divided amongst
             // the (three) threads of the current team.
             //        #pragma omp for
+            int& rate = success_rate.at(vehicle_count);
+            std::vector<t_vec2f> &pos = mVehicalPositions.at(vehicle_count);
+            pos.clear();
             for (unsigned int i = 0; i < vec_robs.size(); ++i)
             {
                 if (!vec_robs[i].isAlive())
@@ -65,8 +70,15 @@ void TrafficController::update(float step)
 
                 someone_is_alive = true;
 
-                vec_robs[i].update(step, mCircuit, mGenAlgo.at(vehicle_count).getNNetworks()[i]);
-                success_rate+=vec_robs[i].getsuccess_rate();
+                int temp;
+                if(vehicle_count == 0)
+                    temp = 1;
+                else
+                    temp = 0;
+                vec_robs[i].update(step, mCircuit, mGenAlgo.at(vehicle_count).getNNetworks()[i],mVehicalPositions.at(temp));
+
+                rate += vec_robs[i].getsuccess_rate();
+                pos.push_back(vec_robs[i].getPosition());
             }
         }
 
