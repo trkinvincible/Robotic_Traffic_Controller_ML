@@ -69,6 +69,7 @@ private: // methods
     void collideAnotherRobot(const std::vector<t_vec2f> opponent_pos);
 
 public: // setter/getter
+    bool has_reached;
     int success_rate;
     int trapped_count;
 

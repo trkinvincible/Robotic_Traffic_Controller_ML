@@ -6,7 +6,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    TrafficController rk_controller("../Graph.txt");
+    TrafficController rk_controller("../Graph_Square.txt");
 
     RendererSFML	my_RendererSFML(rk_controller);
 

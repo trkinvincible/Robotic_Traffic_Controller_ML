@@ -36,7 +36,7 @@ void Robots::updateFitness()
         m_current_checkpointX = x_pos;
     }else{
 
-        if(trapped_count > 15){
+        if(trapped_count > 50){
 
             m_alive = false;
         }
@@ -47,7 +47,7 @@ void Robots::updateFitness()
         m_current_checkpointY = y_pos;
     }else{
 
-        if(trapped_count > 15){
+        if(trapped_count > 50){
 
             m_alive = false;
         }
@@ -60,7 +60,7 @@ void Robots::updateFitness()
     int distancey = (mDestination.y - m_position.y) * (mDestination.y - m_position.y);
 
     double distance = std::sqrt(distancex + distancey);
-    if(distance <= mDistancetoTarget && distance <= mBestDistance){
+    if(distance < mDistancetoTarget && distance < mBestDistance){
 
         mBestDistance = distance;
         ++m_fitness;
@@ -81,9 +81,9 @@ void Robots::updateFitness()
         // this line reward a faster robo once the mission is completed
         m_fitness += 1000.0f / m_total_updates;
         m_alive = false;
-        sleep(2);
+//        sleep(2);
         success_rate++;
-
+        has_reached = true;
     }
 }
 
@@ -187,8 +187,29 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
 
     this->updateSensors();
     this->collideNodes(circuit);
-//    collideAnotherRobot(oponent_pos);
+    collideAnotherRobot(oponent_pos);
     this->updateFitness();
+
+    if(has_reached){
+
+        std::string info;
+        std::stringstream ss(info);
+
+        std::string output_file("../weights.txt");
+        std::ofstream myfile(output_file,std::fstream::app);
+        ss << "source: " << mSource.toString() << "\ndestination: " << mDestination.toString() << std::endl;
+        std::vector<float> log_weights;
+        in_NN.getWeights(log_weights);
+        ss << "weights:\n";
+        for(auto item : log_weights){
+
+            ss << "  " << item;
+        }
+        ss << std::endl;
+        myfile << ss.str();
+        myfile.close();
+    }
+
 
     if (!m_alive)
         return;
@@ -228,11 +249,11 @@ void Robots::update(float step, const Circuit& circuit, const NeuralNetwork& in_
     float speed;
     float dummy_speed;
     if(unlocked_count >= 3 && m_fitness > 1){
-        speed	    = std::max(50.0f,output[1]*10.0f) * 1.5f;
-        dummy_speed = std::max(50.0f,output[1]*10.0f) * 1.5f;
-    }else{
-        speed = std::min(50.0f,output[1]*10.0f) * 1.5f;
+        speed	    = std::min(50.0f,output[1]*10.0f) * 1.5f;
         dummy_speed = std::min(50.0f,output[1]*10.0f) * 1.5f;
+    }else{
+        speed = std::max(50.0f,output[1]*10.0f) * 1.5f;
+        dummy_speed = std::max(50.0f,output[1]*10.0f) * 1.5f;
     }
 
 #if 1

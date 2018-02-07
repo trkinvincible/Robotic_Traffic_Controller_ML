@@ -181,7 +181,9 @@ void  RendererSFML::run(std::function<void()> callback)
 
         // render circuit
         std::pair<int,int> grid_degree = std::make_pair<int,int>(5,5);
-        std::vector<int> skip_index = {1,2,4,5,6,10,16,20,21,22,24,25};
+        //plus shape
+        //std::vector<int> skip_index = {1,2,4,5,6,10,16,20,21,22,24,25};
+        std::vector<int> skip_index;// = {1,2,4,5,6,10,16,20,21,22,24,25};
         drawGrap(window,grid_degree,150,skip_index);
 
         std::vector<int> index_fittest_robots;
